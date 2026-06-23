@@ -51,3 +51,14 @@
 - Unpopular Opinions megathread (post ID: 1slwegj) — yielded `hot_take` and `analysis`
 
 **Labeling process:** All 220 examples were labeled manually. Each post was read in full and assigned a single label based on the taxonomy above. When a post touched multiple categories, the primary intent determined the label (e.g. a transfer post that also contained tactical opinion was labeled `transfer_rumor` if the transfer was the main subject). 
+
+**Label distribution:**
+
+| Label               |Count|    %  |
+|---------------------|---- |-------|
+| `matchday_reaction` | 82  | 37.3% |
+| `hot_take`          | 66  | 30.0% |
+| `transfer_rumor`    | 44  | 20.0% |
+| `analysis`          | 28  | 12.7% |
+
+The dataset skews toward `matchday_reaction` because the top posts from the past year were dominated by Diogo Jota tribute posts, which are emotional by nature. `analysis` is the smallest class because genuine evidence-based arguments are rarer in the wild than reactions or hot takes.
