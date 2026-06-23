@@ -177,3 +177,17 @@ Fine-tuning regression: **0.394**
 | **True: hot_take** | 7 | 3 | 0 | 0 |
 | **True: analysis** | 2 | 2 | 0 | 0 |
 | **True: transfer_rumor** | 7 | 0 | 0 | 0 |
+
+### 3 Wrong Predictions Analyzed
+
+**#1 — True: `transfer_rumor` → Predicted: `matchday_reaction` (confidence: 0.32)**
+> *"Liverpool FC complete signing of Thiago Alcantara"*
+> This is a short announcement-style post with no transfer-specific vocabulary (no "fee", "contract", "Romano", "here we go"). The fine-tuned model never learned the `transfer_rumor` pattern — it predicted 0 correct transfer rumors across the entire test set. The post's brevity and declarative tone were likely associated with matchday announcements in the training data.
+
+**#2 — True: `analysis` → Predicted: `matchday_reaction` (confidence: 0.29)**
+> *"There are interviews where Trent has said Klopp literally wanted him to hit those long balls to create a counterpress situation after the cross turnover which effectively creates defensive disorganisation if we win the ball back."*
+> The model had only 28 analysis examples in training (13% of data) — not enough to learn what careful tactical reasoning looks like. The low confidence score (0.29) confirms the model was essentially guessing. It defaulted to the majority class.
+
+**#3 — True: `hot_take` → Predicted: `matchday_reaction` (confidence: 0.31)**
+> *"No managers could've survived this cursed season."*
+> This post has emotional urgency and implicitly references the current season, which the model confused for a matchday reaction. The distinction between "reacting emotionally to a moment" and "making an unsupported claim about the season" is subtle — and the model never learned it because it collapsed to predicting `matchday_reaction` for anything that didn't look like a `hot_take` by surface features.
