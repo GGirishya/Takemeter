@@ -225,3 +225,5 @@ The core problem is that DistilBERT needed more labeled examples than I gave it,
 ## Spec Reflection
 
 **One way the spec helped:** Defining edge case decision rules before data collection was essential. The rule "transfer topic + stat-based argument → `analysis`, not `transfer_rumor`" came up repeatedly during labeling and having it written down kept the labels consistent. Without it, those borderline posts would have been labeled inconsistently depending on mood.
+
+**One way implementation diverged from the spec:** The spec assumed roughly equal label distribution across classes. In practice, the top posts from r/LiverpoolFC for the past year were dominated by Diogo Jota tribute posts (he passed away during the season), which are all `matchday_reaction`. This was unforeseeable during planning and meant the dataset ended up more imbalanced than intended. The fix — sourcing from the Unpopular Opinions megathread — helped with `hot_take` and `analysis` but couldn't fully compensate.
