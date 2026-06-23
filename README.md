@@ -205,3 +205,12 @@ Fine-tuning regression: **0.394**
 **Correct prediction explained:** *"Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'"* was correctly labeled `matchday_reaction`. This post follows a strict scoreline format that appears frequently in the training data. The bracketed score notation, player name, and minute marker are strong surface-level features the model learned to associate with live match updates — the one pattern it reliably got right.
 
 ---
+
+
+## Reflection
+
+**What the model learned vs. what I intended:**
+
+I intended the model to learn the semantic difference between four types of discourse: evidence-based reasoning, unsupported assertion, emotional reaction, and factual news. What it actually learned was a much simpler heuristic: if the text looks like a live match update or short exclamation, predict `matchday_reaction`; if it looks like a longer opinionated sentence, try `hot_take`; otherwise default to `matchday_reaction`. It never learned `analysis` or `transfer_rumor` at all — both got F1 scores of 0.00.
+
+The core problem is that DistilBERT needed more labeled examples than I gave it, especially for the minority classes. With 28 analysis examples and 44 transfer rumors, the model could achieve 37% accuracy by guessing `matchday_reaction` every time — which was good enough to minimize its training loss without learning the harder distinctions.
