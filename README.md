@@ -62,3 +62,16 @@
 | `analysis`          | 28  | 12.7% |
 
 The dataset skews toward `matchday_reaction` because the top posts from the past year were dominated by Diogo Jota tribute posts, which are emotional by nature. `analysis` is the smallest class because genuine evidence-based arguments are rarer in the wild than reactions or hot takes.
+
+**3 difficult-to-label examples:**
+
+1. *"Stats since April last year, last 38 games. The only reason we won last year is because they were playing as a team. Now they are playing as individuals and poorly coached."*
+   → **Decision: `analysis`**. The post references specific stats and makes a causal argument from them. Although the conclusion ("poorly coached") sounds like a hot take, the writer is reasoning from evidence rather than asserting without support.
+
+2. *"Klopp watching this transfer window"* (meme reference)
+   → **Decision: `hot_take`**. No transfer rumor is attached — it's an opinion about FSG's transfer activity expressed through a cultural reference. No evidence, just assertion.
+
+3. *"[Official] Liverpool FC can confirm Arne Slot is to depart"*
+   → **Decision: `transfer_rumor`**. Although this is about a manager departure rather than a player transfer, the post is fundamentally about personnel movement at the club, which fits the spirit of the label.
+
+---
