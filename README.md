@@ -39,3 +39,13 @@
 - Transfer topic + opinion with no rumor attached (e.g. "we should sign X") → `hot_take`
 - Transfer topic + stat-based argument for why the player fits the system → `analysis`
 - Stat used as decoration for a pre-formed opinion → `hot_take`, not `analysis`
+
+---
+
+## Data Collection
+
+**Sources:**
+- Top posts from r/LiverpoolFC (top/year, 100 posts) — primarily yielded `matchday_reaction` due to Diogo Jota tribute posts dominating the top of the year
+- Comment thread on a Klopp vs Slot tactical comparison post (post ID: 1rvtt9u) — yielded `analysis` and `hot_take`
+- Reddit search for "transfer" — yielded `transfer_rumor`
+- Unpopular Opinions megathread (post ID: 1slwegj) — yielded `hot_take` and `analysis`
