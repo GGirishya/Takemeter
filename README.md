@@ -75,3 +75,34 @@ The dataset skews toward `matchday_reaction` because the top posts from the past
    → **Decision: `transfer_rumor`**. Although this is about a manager departure rather than a player transfer, the post is fundamentally about personnel movement at the club, which fits the spirit of the label.
 
 ---
+
+## Baseline
+
+**Model:** Groq `llama-3.3-70b-versatile` (zero-shot)
+
+**Prompt used:**
+
+```
+You are classifying posts and comments from r/LiverpoolFC, a subreddit for Liverpool Football Club fans.
+Assign each post to exactly one of the following categories.
+
+analysis: A structured argument backed by stats, tactical observation, historical comparison, or specific evidence. The writer is reasoning from evidence, not just reacting or asserting.
+Example: "Slot switched Salah to more of an inside forward role..."
+
+hot_take: A bold, confident opinion stated without real supporting evidence. The post asserts a strong claim rather than arguing for it.
+Example: "Mac Allister is overrated, never shows up in big games."
+
+matchday_reaction: An immediate emotional response tied to a specific match, goal, or moment. Little to no argument.
+Example: "ABSOLUTELY INCREDIBLE. WHAT A GOAL. I love this team so much."
+
+transfer_rumor: A post primarily about player movement — signings, departures, contract news, or speculation.
+Example: "Fabrizio Romano: Liverpool in advanced talks with Bayer Leverkusen for Wirtz, here we go soon."
+
+Respond with ONLY the label name. Do not explain your reasoning.
+
+Valid labels:
+analysis
+hot_take
+matchday_reaction
+transfer_rumor
+```
