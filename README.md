@@ -250,7 +250,7 @@ All annotation decisions were made by me. Claude was used as a writing and extra
 
 | File | Description |
 |---|---|
-| `takemeter_dataset.csv` | 220 labeled examples (text, label) |
+| `takemeter_dabase.csv` | 220 labeled examples (text, label) |
 | `planning.md` | Label design, data collection plan, evaluation criteria |
 | `confusion_matrix.png` | Fine-tuned model confusion matrix on test set |
 | `evaluation_results.json` | Baseline and fine-tuned accuracy scores |
