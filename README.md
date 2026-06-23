@@ -191,3 +191,17 @@ Fine-tuning regression: **0.394**
 **#3 — True: `hot_take` → Predicted: `matchday_reaction` (confidence: 0.31)**
 > *"No managers could've survived this cursed season."*
 > This post has emotional urgency and implicitly references the current season, which the model confused for a matchday reaction. The distinction between "reacting emotionally to a moment" and "making an unsupported claim about the season" is subtle — and the model never learned it because it collapsed to predicting `matchday_reaction` for anything that didn't look like a `hot_take` by surface features.
+
+### Sample Classifications Table
+
+| Post (truncated) | True Label | Predicted Label | Confidence | Correct? |
+|-------------------|---|---|---|---|
+| "Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'" | matchday_reaction | matchday_reaction | 0.32 | ✅ |
+| "No managers could've survived this cursed season." | hot_take | matchday_reaction | 0.31 | ❌ |
+| "Liverpool FC complete signing of Thiago Alcantara" | transfer_rumor | matchday_reaction | 0.32 | ❌ |
+| "Slot will stay and we'll have a much better run under him next season" | hot_take | hot_take | 0.31 | ✅ |
+| "There are interviews where Trent has said Klopp literally wanted him to hit long balls to create a counterpress situation..." | analysis | matchday_reaction | 0.29 | ❌ |
+
+**Correct prediction explained:** *"Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'"* was correctly labeled `matchday_reaction`. This post follows a strict scoreline format that appears frequently in the training data. The bracketed score notation, player name, and minute marker are strong surface-level features the model learned to associate with live match updates — the one pattern it reliably got right.
+
+---
