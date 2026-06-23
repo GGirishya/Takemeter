@@ -34,3 +34,8 @@
 **`transfer_rumor`**
 - *"[Romano] EXCLUSIVE: Florian Wirtz to Liverpool HERE WE GO! Liverpool verbally agree deal in principle with Bayer Leverkusen for package reaching €150m add-ons included."*
 - *"[Joyce] Liverpool and Newcastle United agree Alexander Isak deal at £125 million. Player expected to sign six-year contract."*
+
+**Edge case decision rules:**
+- Transfer topic + opinion with no rumor attached (e.g. "we should sign X") → `hot_take`
+- Transfer topic + stat-based argument for why the player fits the system → `analysis`
+- Stat used as decoration for a pre-formed opinion → `hot_take`, not `analysis`
