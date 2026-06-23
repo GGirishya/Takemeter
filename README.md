@@ -214,3 +214,14 @@ Fine-tuning regression: **0.394**
 I intended the model to learn the semantic difference between four types of discourse: evidence-based reasoning, unsupported assertion, emotional reaction, and factual news. What it actually learned was a much simpler heuristic: if the text looks like a live match update or short exclamation, predict `matchday_reaction`; if it looks like a longer opinionated sentence, try `hot_take`; otherwise default to `matchday_reaction`. It never learned `analysis` or `transfer_rumor` at all — both got F1 scores of 0.00.
 
 The core problem is that DistilBERT needed more labeled examples than I gave it, especially for the minority classes. With 28 analysis examples and 44 transfer rumors, the model could achieve 37% accuracy by guessing `matchday_reaction` every time — which was good enough to minimize its training loss without learning the harder distinctions.
+
+**What I would do differently:**
+1. Balance the dataset before training — oversample `analysis` and `transfer_rumor` to at least 60 examples each, or use a weighted loss function
+2. Collect more `analysis` examples specifically — 28 is insufficient for a 66M parameter model to learn a nuanced category
+3. Evaluate per-class F1 during training, not just accuracy — a model ignoring two classes entirely can still report 45% overall accuracy, which masks the failure
+
+---
+
+## Spec Reflection
+
+**One way the spec helped:** Defining edge case decision rules before data collection was essential. The rule "transfer topic + stat-based argument → `analysis`, not `transfer_rumor`" came up repeatedly during labeling and having it written down kept the labels consistent. Without it, those borderline posts would have been labeled inconsistently depending on mood.
