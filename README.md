@@ -3,11 +3,13 @@
 **AI201 Project 3 | Guillaume Girishya | Member ID 155499**
 
 ---
+
 ## Community Choice
 
-**r/LiverpoolFC** (645,000+ members) is one of the largest football club subreddits. I chose it because I am a liverpool fan and, its posts fall naturally into distinct discourse modes: raw emotional reactions to goals and results, bold opinions about players and managers, evidence-based tactical arguments, and transfer news. These four types are genuinely different in tone, structure, and intent, making it a strong candidate for a text classifier. The community is also highly active, providing abundant labeled data from a single consistent source.
+**r/LiverpoolFC** (645,000+ members) is one of the largest football club subreddits. It was chosen because its posts fall naturally into distinct discourse modes: raw emotional reactions to goals and results, bold opinions about players and managers, evidence-based tactical arguments, and transfer news. These four types are genuinely different in tone, structure, and intent — making it a strong candidate for a text classifier. The community is also highly active, providing abundant labeled data from a single consistent source.
 
 ---
+
 ## Label Taxonomy
 
 | Label | Definition |
@@ -29,7 +31,7 @@
 
 **`matchday_reaction`**
 - *"Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'"*
-- *"They won the whole lot."*
+- *"They won the f***ing lot."*
 
 **`transfer_rumor`**
 - *"[Romano] EXCLUSIVE: Florian Wirtz to Liverpool HERE WE GO! Liverpool verbally agree deal in principle with Bayer Leverkusen for package reaching €150m add-ons included."*
@@ -50,16 +52,16 @@
 - Reddit search for "transfer" — yielded `transfer_rumor`
 - Unpopular Opinions megathread (post ID: 1slwegj) — yielded `hot_take` and `analysis`
 
-**Labeling process:** All 220 examples were labeled manually. Each post was read in full and assigned a single label based on the taxonomy above. When a post touched multiple categories, the primary intent determined the label (e.g. a transfer post that also contained tactical opinion was labeled `transfer_rumor` if the transfer was the main subject). 
+**Labeling process:** All 220 examples were labeled manually. Each post was read in full and assigned a single label based on the taxonomy above. When a post touched multiple categories, the primary intent determined the label (e.g. a transfer post that also contained tactical opinion was labeled `transfer_rumor` if the transfer was the main subject).
 
 **Label distribution:**
 
-| Label               |Count|    %  |
-|---------------------|---- |-------|
-| `matchday_reaction` | 82  | 37.3% |
-| `hot_take`          | 66  | 30.0% |
-| `transfer_rumor`    | 44  | 20.0% |
-| `analysis`          | 28  | 12.7% |
+| Label | Count | % |
+|---|---|---|
+| `matchday_reaction` | 82 | 37.3% |
+| `hot_take` | 66 | 30.0% |
+| `transfer_rumor` | 44 | 20.0% |
+| `analysis` | 28 | 12.7% |
 
 The dataset skews toward `matchday_reaction` because the top posts from the past year were dominated by Diogo Jota tribute posts, which are emotional by nature. `analysis` is the smallest class because genuine evidence-based arguments are rarer in the wild than reactions or hot takes.
 
@@ -117,7 +119,7 @@ transfer_rumor
 
 **Training setup:**
 - Train/val/test split: 70% / 15% / 15% (154 train, 33 val, 33 test)
-- Tokenizer: DistilBERT tokenizer, max length 128 tokens
+- Tokenizer: DistilBERT tokenizer, max length 256 tokens
 - Labels encoded from the label map: `matchday_reaction=0`, `hot_take=1`, `analysis=2`, `transfer_rumor=3`
 
 **Hyperparameters:**
@@ -131,9 +133,10 @@ transfer_rumor
 | `warmup_steps` | 50 | Gradual learning rate warmup to stabilize early training |
 | `load_best_model_at_end` | True | Saves the checkpoint with best validation accuracy |
 
-**Key hyperparameter decision:** `num_train_epochs=3` was chosen deliberately over a higher value. With only 154 training examples and significant class imbalance, more epochs would have caused the model to overfit further to `matchday_reaction` rather than learning the minority classes. Even at 3 epochs the model collapsed — more epochs would have made this worse.
+**Key hyperparameter decision:** `num_train_epochs=3` was chosen deliberately over a higher value. With only 154 training examples and significant class imbalance, more epochs risk overfitting to majority classes. The model was evaluated after each epoch and the best checkpoint was kept.
 
 ---
+
 ## Evaluation Report
 
 ### Accuracy
@@ -141,9 +144,9 @@ transfer_rumor
 | Model | Accuracy |
 |---|---|
 | Zero-shot baseline (Groq llama-3.3-70b) | **84.8%** |
-| Fine-tuned DistilBERT | **45.5%** |
+| Fine-tuned DistilBERT | **78.8%** |
 
-Fine-tuning regression: **0.394**
+Fine-tuning regression: **0.061** (baseline still wins, but fine-tuned model is much more competitive than the first run)
 
 ### Per-Class Metrics
 
@@ -151,21 +154,21 @@ Fine-tuning regression: **0.394**
 
 | Label | Precision | Recall | F1 | Support |
 |---|---|---|---|---|
-| matchday_reaction | 0.91 | 0.83 | 0.87 | 12 |
-| hot_take | 1.00 | 0.70 | 0.82 | 10 |
-| analysis | 0.80 | 1.00 | 0.89 | 4 |
-| transfer_rumor | 0.70 | 1.00 | 0.82 | 7 |
-| **macro avg** | **0.85** | **0.88** | **0.85** | 33 |
+| matchday_reaction | 0.92 | 0.92 | 0.92 | 13 |
+| hot_take | 1.00 | 0.60 | 0.75 | 10 |
+| analysis | 0.67 | 1.00 | 0.80 | 4 |
+| transfer_rumor | 0.75 | 1.00 | 0.86 | 6 |
+| **macro avg** | **0.83** | **0.88** | **0.83** | 33 |
 
 **Fine-tuned DistilBERT:**
 
 | Label | Precision | Recall | F1 | Support |
 |---|---|---|---|---|
-| matchday_reaction | 0.43 | 1.00 | 0.60 | 12 |
-| hot_take | 0.60 | 0.30 | 0.40 | 10 |
+| matchday_reaction | 0.76 | 1.00 | 0.87 | 13 |
+| hot_take | 0.73 | 0.80 | 0.76 | 10 |
 | analysis | 0.00 | 0.00 | 0.00 | 4 |
-| transfer_rumor | 0.00 | 0.00 | 0.00 | 7 |
-| **macro avg** | **0.26** | **0.33** | **0.25** | 33 |
+| transfer_rumor | 1.00 | 0.83 | 0.91 | 6 |
+| **macro avg** | **0.62** | **0.66** | **0.63** | 33 |
 
 ### Confusion Matrix
 
@@ -173,61 +176,59 @@ Fine-tuning regression: **0.394**
 
 | | Pred: matchday_reaction | Pred: hot_take | Pred: analysis | Pred: transfer_rumor |
 |---|---|---|---|---|
-| **True: matchday_reaction** | 12 | 0 | 0 | 0 |
-| **True: hot_take** | 7 | 3 | 0 | 0 |
-| **True: analysis** | 2 | 2 | 0 | 0 |
-| **True: transfer_rumor** | 7 | 0 | 0 | 0 |
+| **True: matchday_reaction** | 13 | 0 | 0 | 0 |
+| **True: hot_take** | 2 | 8 | 0 | 0 |
+| **True: analysis** | 1 | 3 | 0 | 0 |
+| **True: transfer_rumor** | 1 | 0 | 0 | 5 |
 
 ### 3 Wrong Predictions Analyzed
 
-**#1 — True: `transfer_rumor` → Predicted: `matchday_reaction` (confidence: 0.32)**
-> *"Liverpool FC complete signing of Thiago Alcantara"*
-> This is a short announcement-style post with no transfer-specific vocabulary (no "fee", "contract", "Romano", "here we go"). The fine-tuned model never learned the `transfer_rumor` pattern — it predicted 0 correct transfer rumors across the entire test set. The post's brevity and declarative tone were likely associated with matchday announcements in the training data.
+**#1 — True: `hot_take` → Predicted: `matchday_reaction` (confidence: 0.27)**
+> *"Despite Isak scoring for Liverpool Newcastle won't sell"*
+> This references a specific match event (Isak scoring) which the model associated with matchday reaction. But the actual claim — that Newcastle won't sell regardless — is an unsupported assertion about transfer policy. The model was misled by the match reference in the first half of the sentence and never reached the hot take in the second half.
 
-**#2 — True: `analysis` → Predicted: `matchday_reaction` (confidence: 0.29)**
-> *"There are interviews where Trent has said Klopp literally wanted him to hit those long balls to create a counterpress situation after the cross turnover which effectively creates defensive disorganisation if we win the ball back."*
-> The model had only 28 analysis examples in training (13% of data) — not enough to learn what careful tactical reasoning looks like. The low confidence score (0.29) confirms the model was essentially guessing. It defaulted to the majority class.
+**#2 — True: `analysis` → Predicted: `hot_take` (confidence: 0.30)**
+> *"I don't think us playing midweek fixtures counts for much. We have a team that's used to a congested schedule. We actually have a bigger squad than Man Utd."*
+> The model confused analysis with hot_take here. The post does make claims without quoting specific stats, but the writer is constructing a reasoned argument using squad context and scheduling evidence. The model never learned to distinguish between "assertion backed by reasoning" and "assertion with no backing" — both can look similar at the surface level.
 
-**#3 — True: `hot_take` → Predicted: `matchday_reaction` (confidence: 0.31)**
-> *"No managers could've survived this cursed season."*
-> This post has emotional urgency and implicitly references the current season, which the model confused for a matchday reaction. The distinction between "reacting emotionally to a moment" and "making an unsupported claim about the season" is subtle — and the model never learned it because it collapsed to predicting `matchday_reaction` for anything that didn't look like a `hot_take` by surface features.
+**#3 — True: `analysis` → Predicted: `hot_take` (confidence: 0.29)**
+> *"As the famous saying goes why fix something that isn't broken. It was working fine as long as he didn't change the tactics much. Once he started imprinting his tactics on the team we started to regress..."*
+> The casual register ("as the famous saying goes") and opinionated conclusion made the model think this was a hot take. But the post makes a specific causal argument about tactical change causing regression — that's analysis. The model struggled with the `analysis` class throughout, getting an F1 of 0.00 for it.
 
 ### Sample Classifications Table
 
 | Post (truncated) | True Label | Predicted Label | Confidence | Correct? |
-|-------------------|---|---|---|---|
-| "Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'" | matchday_reaction | matchday_reaction | 0.32 | ✅ |
-| "No managers could've survived this cursed season." | hot_take | matchday_reaction | 0.31 | ❌ |
-| "Liverpool FC complete signing of Thiago Alcantara" | transfer_rumor | matchday_reaction | 0.32 | ❌ |
-| "Slot will stay and we'll have a much better run under him next season" | hot_take | hot_take | 0.31 | ✅ |
-| "There are interviews where Trent has said Klopp literally wanted him to hit long balls to create a counterpress situation..." | analysis | matchday_reaction | 0.29 | ❌ |
+|---|---|---|---|---|
+| "Kelleher saved Cristiano Ronaldo penalty" | matchday_reaction | matchday_reaction | 0.30 | ✅ |
+| "No managers could've survived this cursed season." | hot_take | hot_take | 0.28 | ✅ |
+| "[LFC] Ryan Gravenberch signed a new long-term contract" | transfer_rumor | transfer_rumor | 0.29 | ✅ |
+| "Despite Isak scoring for Liverpool Newcastle won't sell" | hot_take | matchday_reaction | 0.27 | ❌ |
+| "I don't think us playing midweek fixtures counts for much. We have a bigger squad than Man Utd." | analysis | hot_take | 0.30 | ❌ |
 
-**Correct prediction explained:** *"Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'"* was correctly labeled `matchday_reaction`. This post follows a strict scoreline format that appears frequently in the training data. The bracketed score notation, player name, and minute marker are strong surface-level features the model learned to associate with live match updates — the one pattern it reliably got right.
+**Correct prediction explained:** *"Kelleher saved Cristiano Ronaldo penalty"* was correctly labeled `matchday_reaction`. The post names a specific player, describes a single match event, and has the short declarative structure typical of live match updates. These surface features appear consistently across `matchday_reaction` examples in the training data, making it one of the model's most reliable patterns.
 
 ---
-
 
 ## Reflection
 
 **What the model learned vs. what I intended:**
 
-I intended the model to learn the semantic difference between four types of discourse: evidence-based reasoning, unsupported assertion, emotional reaction, and factual news. What it actually learned was a much simpler heuristic: if the text looks like a live match update or short exclamation, predict `matchday_reaction`; if it looks like a longer opinionated sentence, try `hot_take`; otherwise default to `matchday_reaction`. It never learned `analysis` or `transfer_rumor` at all — both got F1 scores of 0.00.
+I intended the model to learn the semantic difference between four types of discourse: evidence-based reasoning, unsupported assertion, emotional reaction, and factual news. What it actually learned was a reasonable approximation for three of the four: it identified `matchday_reaction` well (F1 0.87), `transfer_rumor` well (F1 0.91), and `hot_take` decently (F1 0.76). The failure was entirely on `analysis` (F1 0.00) — the model consistently confused it with `hot_take`.
 
-The core problem is that DistilBERT needed more labeled examples than I gave it, especially for the minority classes. With 28 analysis examples and 44 transfer rumors, the model could achieve 37% accuracy by guessing `matchday_reaction` every time — which was good enough to minimize its training loss without learning the harder distinctions.
+The core issue is that `analysis` and `hot_take` are the hardest to distinguish from surface features alone. Both can be written in opinionated, confident language. The difference is whether the writer reasons from evidence — a semantic distinction that requires understanding argument structure, not just word patterns. DistilBERT at 66M parameters, trained on only 20 analysis examples, never developed that capability.
 
 **What I would do differently:**
-1. Balance the dataset before training — oversample `analysis` and `transfer_rumor` to at least 60 examples each, or use a weighted loss function
-2. Collect more `analysis` examples specifically — 28 is insufficient for a 66M parameter model to learn a nuanced category
-3. Evaluate per-class F1 during training, not just accuracy — a model ignoring two classes entirely can still report 45% overall accuracy, which masks the failure
+1. Collect at least 60 `analysis` examples before training — 20 in the training split is not enough
+2. Use a weighted loss function to penalize the model more for missing minority classes
+3. Evaluate per-class F1 during training, not just overall accuracy — the model could achieve 79% overall while completely ignoring `analysis`
 
 ---
 
 ## Spec Reflection
 
-**One way the spec helped:** Defining edge case decision rules before data collection was essential. The rule "transfer topic + stat-based argument → `analysis`, not `transfer_rumor`" came up repeatedly during labeling and having it written down kept the labels consistent. Without it, those borderline posts would have been labeled inconsistently depending on mood.
+**One way the spec helped:** Defining edge case decision rules before data collection was essential. The rule "transfer topic + stat-based argument → `analysis`, not `transfer_rumor`" came up repeatedly during labeling and having it written down kept the labels consistent. Without it, those borderline posts would have been labeled inconsistently.
 
-**One way implementation diverged from the spec:** The spec assumed roughly equal label distribution across classes. In practice, the top posts from r/LiverpoolFC for the past year were dominated by Diogo Jota tribute posts (he passed away during the season), which are all `matchday_reaction`. This was unforeseeable during planning and meant the dataset ended up more imbalanced than intended. The fix — sourcing from the Unpopular Opinions megathread — helped with `hot_take` and `analysis` but couldn't fully compensate.
-
+**One way implementation diverged from the spec:** The spec assumed roughly equal label distribution across classes. In practice, the top posts from r/LiverpoolFC for the past year were dominated by Diogo Jota tribute posts (he passed away during the season), which are all `matchday_reaction`. This was unforeseeable during planning and meant the dataset ended up more imbalanced than intended — particularly hurting the `analysis` class which ended up with only 28 examples total (20 in training).
 
 ---
 
@@ -236,10 +237,10 @@ The core problem is that DistilBERT needed more labeled examples than I gave it,
 This project used Claude (Anthropic) as a collaborative tool throughout. Two specific instances:
 
 **1. Dataset labeling assistance**
-I pasted raw Reddit JSON into Claude and asked it to extract post text and suggest labels based on the taxonomy I had defined. I reviewed every suggested label individually and overrode several, for example, Claude initially labeled *"Stats since April last year, last 38 games..."* as `hot_take` because the conclusion was assertive, but I changed it to `analysis` because the post was explicitly reasoning from a statistic. The final labels reflect my judgment, with Claude handling the mechanical extraction work.
+I pasted raw Reddit JSON into Claude and asked it to extract post text and suggest labels based on the taxonomy I had defined. I reviewed every suggested label individually and overrode several , for example, Claude initially labeled *"Stats since April last year, last 38 games..."* as `hot_take` because the conclusion was assertive, but I changed it to `analysis` because the post was explicitly reasoning from a statistic. The final labels reflect my judgment, with Claude handling the mechanical extraction work.
 
 **2. README and planning.md drafting**
-I directed Claude to draft the planning.md and README structure based on the rubric requirements and my notes. I then reviewed each section, corrected factual details (e.g. exact post counts, specific wrong predictions), and added the per-class metrics tables once I had the real numbers from the notebook. The failure analysis and reflection sections were written collaboratively. I described what I observed, Claude structured the explanation, and I revised for accuracy.
+I directed Claude to draft the planning.md and README structure based on the rubric requirements and my notes. I then reviewed each section, corrected factual details (exact post counts, specific wrong predictions, real metric numbers from the notebook), and revised the failure analysis based on what I actually observed in the output. The reflection sections were written collaboratively, I described what I observed, Claude structured the explanation, and I revised for accuracy.
 
 All annotation decisions were made by me. Claude was used as a writing and extraction tool, not as the final decision-maker on labels.
 
@@ -253,4 +254,4 @@ All annotation decisions were made by me. Claude was used as a writing and extra
 | `planning.md` | Label design, data collection plan, evaluation criteria |
 | `confusion_matrix.png` | Fine-tuned model confusion matrix on test set |
 | `evaluation_results.json` | Baseline and fine-tuned accuracy scores |
-| `ai201_project3_takemeter.ipynb` | Colab notebook with baseline and fine-tuning code |
+| `Takemeter-Liverpool.ipynb` | Colab notebook with baseline and fine-tuning code |
