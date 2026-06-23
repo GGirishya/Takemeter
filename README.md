@@ -110,3 +110,70 @@ transfer_rumor
 **How results were collected:** Each post in the test set was sent to the Groq API individually with the system prompt above. The model's response was stripped and matched against the four valid label strings. All 33 test posts returned parseable responses (100% parse rate).
 
 ---
+
+## Fine-Tuning Approach
+
+**Base model:** `distilbert-base-uncased` (66M parameters, uncased English)
+
+**Training setup:**
+- Train/val/test split: 70% / 15% / 15% (154 train, 33 val, 33 test)
+- Tokenizer: DistilBERT tokenizer, max length 128 tokens
+- Labels encoded from the label map: `matchday_reaction=0`, `hot_take=1`, `analysis=2`, `transfer_rumor=3`
+
+**Hyperparameters:**
+
+| Parameter | Value | Reasoning |
+|---|---|---|
+| `num_train_epochs` | 3 | Standard starting point for small datasets; more epochs risk overfitting on 220 examples |
+| `learning_rate` | 2e-5 | Standard for fine-tuning BERT-family models; lower = more stable |
+| `per_device_train_batch_size` | 16 | Fits T4 GPU comfortably without OOM errors |
+| `weight_decay` | 0.01 | Light regularization to reduce overfitting |
+| `warmup_steps` | 50 | Gradual learning rate warmup to stabilize early training |
+| `load_best_model_at_end` | True | Saves the checkpoint with best validation accuracy |
+
+**Key hyperparameter decision:** `num_train_epochs=3` was chosen deliberately over a higher value. With only 154 training examples and significant class imbalance, more epochs would have caused the model to overfit further to `matchday_reaction` rather than learning the minority classes. Even at 3 epochs the model collapsed — more epochs would have made this worse.
+
+---
+## Evaluation Report
+
+### Accuracy
+
+| Model | Accuracy |
+|---|---|
+| Zero-shot baseline (Groq llama-3.3-70b) | **84.8%** |
+| Fine-tuned DistilBERT | **45.5%** |
+
+Fine-tuning regression: **0.394**
+
+### Per-Class Metrics
+
+**Baseline (Groq):**
+
+| Label | Precision | Recall | F1 | Support |
+|---|---|---|---|---|
+| matchday_reaction | 0.91 | 0.83 | 0.87 | 12 |
+| hot_take | 1.00 | 0.70 | 0.82 | 10 |
+| analysis | 0.80 | 1.00 | 0.89 | 4 |
+| transfer_rumor | 0.70 | 1.00 | 0.82 | 7 |
+| **macro avg** | **0.85** | **0.88** | **0.85** | 33 |
+
+**Fine-tuned DistilBERT:**
+
+| Label | Precision | Recall | F1 | Support |
+|---|---|---|---|---|
+| matchday_reaction | 0.43 | 1.00 | 0.60 | 12 |
+| hot_take | 0.60 | 0.30 | 0.40 | 10 |
+| analysis | 0.00 | 0.00 | 0.00 | 4 |
+| transfer_rumor | 0.00 | 0.00 | 0.00 | 7 |
+| **macro avg** | **0.26** | **0.33** | **0.25** | 33 |
+
+### Confusion Matrix
+
+**Fine-tuned model (test set):**
+
+| | Pred: matchday_reaction | Pred: hot_take | Pred: analysis | Pred: transfer_rumor |
+|---|---|---|---|---|
+| **True: matchday_reaction** | 12 | 0 | 0 | 0 |
+| **True: hot_take** | 7 | 3 | 0 | 0 |
+| **True: analysis** | 2 | 2 | 0 | 0 |
+| **True: transfer_rumor** | 7 | 0 | 0 | 0 |
