@@ -16,3 +16,21 @@
 | `hot_take` | Bold, confident opinion stated without real supporting evidence. Asserts rather than argues. |
 | `matchday_reaction` | Immediate emotional response tied to a specific match or moment. Little to no argument — expressing a feeling in real time. |
 | `transfer_rumor` | Primarily about player movement — signings, departures, contract news, or speculation about deals. Focus is on the transfer itself, not tactical analysis. |
+
+**Examples per label:**
+
+**`analysis`**
+- *"Slot switched Salah to more of an inside forward role not tracking back, switched formation to a double pivot with a 10 instead of 4-3-3 which allowed Gravenberch to flourish, and started using Diaz as a false 9 — those are big changes that directly explain last season's results."*
+- *"There are interviews where Trent has said Klopp literally wanted him to hit those long balls to create a counterpress situation after the cross turnover, which effectively creates defensive disorganisation if we win the ball back."*
+
+**`hot_take`**
+- *"Lowest 38-game points total since we fired Brendan. Writing is on the wall. Get him out."*
+- *"FSG aren't the great owners people make them out to be — they were carried by Klopp and made to look better than they actually are."*
+
+**`matchday_reaction`**
+- *"Newcastle [2] - [3] Liverpool - R. Ngumoha 90+9'"*
+- *"They won the whole lot."*
+
+**`transfer_rumor`**
+- *"[Romano] EXCLUSIVE: Florian Wirtz to Liverpool HERE WE GO! Liverpool verbally agree deal in principle with Bayer Leverkusen for package reaching €150m add-ons included."*
+- *"[Joyce] Liverpool and Newcastle United agree Alexander Isak deal at £125 million. Player expected to sign six-year contract."*
