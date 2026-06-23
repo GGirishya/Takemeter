@@ -49,3 +49,5 @@
 - Comment thread on a Klopp vs Slot tactical comparison post (post ID: 1rvtt9u) — yielded `analysis` and `hot_take`
 - Reddit search for "transfer" — yielded `transfer_rumor`
 - Unpopular Opinions megathread (post ID: 1slwegj) — yielded `hot_take` and `analysis`
+
+**Labeling process:** All 220 examples were labeled manually. Each post was read in full and assigned a single label based on the taxonomy above. When a post touched multiple categories, the primary intent determined the label (e.g. a transfer post that also contained tactical opinion was labeled `transfer_rumor` if the transfer was the main subject). 
