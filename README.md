@@ -106,3 +106,7 @@ hot_take
 matchday_reaction
 transfer_rumor
 ```
+
+**How results were collected:** Each post in the test set was sent to the Groq API individually with the system prompt above. The model's response was stripped and matched against the four valid label strings. All 33 test posts returned parseable responses (100% parse rate).
+
+---
