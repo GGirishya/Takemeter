@@ -227,3 +227,30 @@ The core problem is that DistilBERT needed more labeled examples than I gave it,
 **One way the spec helped:** Defining edge case decision rules before data collection was essential. The rule "transfer topic + stat-based argument → `analysis`, not `transfer_rumor`" came up repeatedly during labeling and having it written down kept the labels consistent. Without it, those borderline posts would have been labeled inconsistently depending on mood.
 
 **One way implementation diverged from the spec:** The spec assumed roughly equal label distribution across classes. In practice, the top posts from r/LiverpoolFC for the past year were dominated by Diogo Jota tribute posts (he passed away during the season), which are all `matchday_reaction`. This was unforeseeable during planning and meant the dataset ended up more imbalanced than intended. The fix — sourcing from the Unpopular Opinions megathread — helped with `hot_take` and `analysis` but couldn't fully compensate.
+
+
+---
+
+## AI Usage
+
+This project used Claude (Anthropic) as a collaborative tool throughout. Two specific instances:
+
+**1. Dataset labeling assistance**
+I pasted raw Reddit JSON into Claude and asked it to extract post text and suggest labels based on the taxonomy I had defined. I reviewed every suggested label individually and overrode several, for example, Claude initially labeled *"Stats since April last year, last 38 games..."* as `hot_take` because the conclusion was assertive, but I changed it to `analysis` because the post was explicitly reasoning from a statistic. The final labels reflect my judgment, with Claude handling the mechanical extraction work.
+
+**2. README and planning.md drafting**
+I directed Claude to draft the planning.md and README structure based on the rubric requirements and my notes. I then reviewed each section, corrected factual details (e.g. exact post counts, specific wrong predictions), and added the per-class metrics tables once I had the real numbers from the notebook. The failure analysis and reflection sections were written collaboratively. I described what I observed, Claude structured the explanation, and I revised for accuracy.
+
+All annotation decisions were made by me. Claude was used as a writing and extraction tool, not as the final decision-maker on labels.
+
+---
+
+## Files
+
+| File | Description |
+|---|---|
+| `takemeter_dataset.csv` | 220 labeled examples (text, label) |
+| `planning.md` | Label design, data collection plan, evaluation criteria |
+| `confusion_matrix.png` | Fine-tuned model confusion matrix on test set |
+| `evaluation_results.json` | Baseline and fine-tuned accuracy scores |
+| `ai201_project3_takemeter.ipynb` | Colab notebook with baseline and fine-tuning code |

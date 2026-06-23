@@ -1,0 +1,13 @@
+{
+  "baseline_accuracy": 0.8485,
+  "finetuned_accuracy": 0.4545,
+  "improvement": -0.3939,
+  "test_set_size": 33,
+  "label_map": {
+    "matchday_reaction": 0,
+    "hot_take": 1,
+    "analysis": 2,
+    "transfer_rumor": 3
+  },
+  "model": "distilbert-base-uncased"
+}
