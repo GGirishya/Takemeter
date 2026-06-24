@@ -1,7 +1,7 @@
 {
   "baseline_accuracy": 0.8485,
-  "finetuned_accuracy": 0.4545,
-  "improvement": -0.3939,
+  "finetuned_accuracy": 0.7879,
+  "improvement": -0.0606,
   "test_set_size": 33,
   "label_map": {
     "matchday_reaction": 0,
