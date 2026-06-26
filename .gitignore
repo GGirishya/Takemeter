@@ -1,5 +1,3 @@
 .env
-/Users/guillaumegirishya/Downloads/Codepath/AI201/Takemeter/liverpool-demo.movliverpool-demo.mov
-*.mov # optionally block all .mov files
-liverpool-demo.mov
-*.mov # optionally block all .mov files
+# Ignore all .mov files (including liverpool-demo.mov)
+*.mov
